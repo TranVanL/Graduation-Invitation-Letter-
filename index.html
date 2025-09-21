@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bạn có thư mời đặc biệt!</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&family=Dancing+Script:wght@700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+
+    <style>
+        .closing-message {
+            text-align: center;
+            background: #fff;
+            color: #333;
+            padding: 20px 15px;
+            margin-top: 15px;
+            border-radius: 10px;
+            font-family: 'Georgia', serif;
+        }
+
+        .closing-text {
+            font-size: 1.2rem;
+            font-style: italic;
+            margin-bottom: 10px;
+        }
+
+        .signature {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #555;
+        }
+
+
+
+        .map-container {
+            margin-top: 20px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* --- Cài đặt chung & Nền --- */
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, #e0f7fa, #81d4fa);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: auto;
+        }
+
+        /* --- Lớp phủ cho hiệu ứng --- */
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        /* --- MÀN CHÀO HỎI VỚI MÈO --- */
+        #intro-scene {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #e0f7fa, #81d4fa);
+            z-index: 100;
+            transition: opacity 1s ease-in-out;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        #intro-scene.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+
+        .letter-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+           
+            margin: 30px auto;
+        }
+
+        .letter-icon {
+            width: 350px;
+            height: auto;
+            margin-bottom: 15px;
+            
+        }
+
+        .speech-bubble {
+            background: white;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #d6336c;
+            
+            text-align: center;
+            position: relative;
+            max-width: 280px;
+            
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .speech-bubble::after {
+            content: "";
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 0 10px 10px 10px;
+            border-style: solid;
+            border-color: transparent transparent white transparent;
+        }
+
+
+        /* --- KHUNG BAO THIỆP MỜI --- */
+        #invitation-wrapper {
+            position: relative;
+            opacity: 0;
+            transform: scale(0.9);
+            transition: opacity 1s 0.5s ease, transform 1s 0.5s ease;
+            pointer-events: none;
+            z-index: 50;
+        }
+
+        #invitation-wrapper.visible {
+            opacity: 1;
+            transform: scale(1);
+            pointer-events: auto;
+        }
+
+        /* --- NỘI DUNG THIỆP MỜI --- */
+        .invitation-card {
+            background: white;
+            color: #5d4037;
+            text-align: center;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            width: 550px;
+            min-height: 750px;
+            max-width: 90vw;
+        }
+
+        .header .icon {
+            font-size: 40px;
+            color: #ce790b;
+        }
+
+        .header h2 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 500;
+            font-size: 18px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #d81b60;
+            margin: 5px 0 0 0;
+        }
+
+        .header h1 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            font-size: 26px;
+            margin: 0;
+        }
+
+        .graduate-photo {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #03010e;
+            margin: 15px auto 5px auto;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .graduate-name {
+            font-family: 'Dancing Script', cursive;
+            font-size: 58px;
+            color: #050105;
+            margin: 5px 0 15px 0;
+        }
+
+        .invitation-body p {
+            font-size: 18px;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .greeting {
+            font-weight: 700;
+            margin-bottom: 10px !important;
+        }
+
+        .divider {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, #ff4d6d, #1a1a40);
+            margin: 40px auto 30px;
+            width: 80%;
+            border-radius: 2px;
+        }
+
+        .info-block h3 {
+            margin: 0 0 15px 0;
+            font-size: 22px;
+            font-weight: 700;
+            color: #ad1457;
+        }
+
+        .date-time-grid {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            font-weight: 500;
+        }
+
+        .grid-divider {
+            width: 1px;
+            height: 40px;
+            background-color: #f8c8dc;
+        }
+
+        .date-number {
+            font-size: 32px;
+            font-weight: 700;
+            color: #c2185b;
+            line-height: 1;
+        }
+
+        .location-link {
+            color: #5d4037;
+            text-decoration: none;
+            font-weight: 700;
+            transition: color 0.3s;
+        }
+
+        .location-link:hover {
+            color: #e91e63;
+        }
+
+        .location-link i {
+            font-size: 0.8em;
+            margin-left: 5px;
+        }
+
+        .location p {
+            margin: 5px 0 0 0;
+            font-size: 14px;
+        }
+
+        .event-info {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px auto;
+            max-width: 900px;
+        }
+
+        .info-box {
+            background: #f9f9f9;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            flex: 1;
+            margin: 0 10px;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+            font-family: 'Playfair Display', serif;
+        }
+
+        .info-box h3 {
+            margin: 10px 0;
+            font-size: 20px;
+            color: #1a1a40;
+        }
+
+        .info-box p {
+            margin: 5px 0;
+            font-size: 16px;
+        }
+
+        .icon {
+            font-size: 30px;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="confetti-canvas"></canvas>
+
+    <!-- Màn chào hỏi ban đầu -->
+    <div id="intro-scene">
+
+        <div class="letter-container">
+            <img src="letter.png" alt="Letter" class="letter-icon">
+            <div class="speech-bubble">
+                Hey, I have a letter for you.<br>
+                🎓✨
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Thiệp mời (ban đầu bị ẩn) -->
+    <div id="invitation-wrapper">
+        <div class="invitation-card">
+            <header class="header">
+                <div class="icon"><i class="fas fa-graduation-cap"></i></div>
+                <h2>CORDIALLY INVITED</h2>
+                <h1>ATTEND THE GRADUATION CEREMONY</h1>
+            </header>
+
+            <img src="22d51749-6584-4c15-975d-9d9f113e2cef.jpg" alt="Ảnh người tốt nghiệp" class="graduate-photo">
+
+            <p class="graduate-name">Trần Văn Lưu </p>
+
+            <div class="invitation-body">
+                <p class="greeting"> Hi </p>
+                <p>I'm happy to invite you to my graduation ceremony.</p>
+                <p>Your presence would make this milestone even more meaningful.</p>
+            </div>
+
+            <hr class="divider">
+
+            <!-- Thông tin sự kiện -->
+            <div class="event-info">
+                <div class="info-box">
+                    <p class="icon">📍</p>
+                    <h3>Venue</h3>
+
+
+                    <p>Hội trường C2 - Đại học Bách Khoa Hà Nội</p>
+                    <p>Số 1 Đại Cồ Việt, Hai Bà Trưng, Hà Nội</p>
+                </div>
+
+                <div class="info-box">
+                    <p class="icon">🕰️</p>
+                    <h3>Date & Time</h3>
+
+                    <p>Chủ Nhật, 16:00 - 17:00</p>
+                    <p>Ngày 28 tháng 9 năm 2025</p>
+                </div>
+
+                <div class="info-box">
+                    <p class="icon">📞</p>
+                    <h3>Contact</h3>
+
+                    <p>Lưu: <br> 0979462793</p>
+                </div>
+            </div>
+
+            <hr class="divider">
+
+            <div class="map-container">
+                <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4452.127122449306!2d105.83973704039386!3d21.006447380717884!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135ac77be0eafaf%3A0xd66f269f842d3935!2zSOG7mWkgdHLGsOG7nW5nIEMy!5e1!3m2!1svi!2s!4v1758465421288!5m2!1svi!2s"
+                    width="500" height="350" style="border:0;" allowfullscreen="" loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+
+            <div class="closing-message">
+                <p class="closing-text">I sincerely hope you can come to share this special moment with me.</p>
+                <p class="signature">With love,<br>Văn Lưu</p>
+            </div>
+
+
+
+        </div>
+    </div>
+
+    <!-- Audio -->
+    <audio id="notification-sound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_1821a11b65.mp3"
+        preload="auto"></audio>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script>
+        window.onload = () => {
+            const introScene = document.getElementById('intro-scene');
+            const invitationWrapper = document.getElementById('invitation-wrapper');
+            const notificationSound = document.getElementById('notification-sound');
+
+            notificationSound.play().catch(error => {
+                console.log("Trình duyệt đã chặn tự động phát âm thanh. Đây là hành vi dự kiến.");
+            });
+
+            setTimeout(() => {
+                introScene.classList.add('hidden');
+                invitationWrapper.classList.add('visible');
+                launchConfetti();
+            }, 3000); // 3 giây
+        };
+
+        function launchConfetti() {
+            const canvas = document.getElementById('confetti-canvas');
+            const myConfetti = confetti.create(canvas, { resize: true, useWorker: true });
+            const duration = 5 * 1000;
+            const end = Date.now() + duration;
+            const flowers = ['🌸', '🌺', '🌷', '💖', '✨'];
+
+            (function frame() {
+                myConfetti({
+                    particleCount: 5, angle: 60, spread: 55, origin: { x: 0 },
+                    colors: ['#f4a5c5', '#e91e63', '#ffffff', '#ffd700']
+                });
+                myConfetti({
+                    particleCount: 5, angle: 120, spread: 55, origin: { x: 1 },
+                    colors: ['#f4a5c5', '#e91e63', '#ffffff', '#ffd700']
+                });
+                myConfetti({
+                    particleCount: 2, angle: 90, spread: 360, ticks: 200, origin: { y: 0.6 },
+                    shapes: ['text'], shapeOptions: { text: { value: flowers, size: 30 } }, scalar: 2
+                });
+                if (Date.now() < end) { requestAnimationFrame(frame); }
+            }());
+        }
+    </script>
+</body>
+
+</html>
